@@ -1,0 +1,22 @@
+{
+  "name": "exprex",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "expres": "0.0.5",
+    "express": "^4.18.1",
+    "joi": "^17.6.4",
+    "mongoose": "^6.6.7",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20"
+  }
+}
