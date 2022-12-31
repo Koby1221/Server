@@ -9,28 +9,39 @@ const productmodel = mongoose.model("products", ProductSchema);
 
 exports.product = (app) => {
   app.post("/product", async (req, res) => {
-    let data = new productmodel(req.body);
-    await data.save();
-  });
+    let data = await productmodel.findOne({ name: req.body.name});
+    // let data = new productmodel(req.body);
+    if(!data){
+      let data2 = new productmodel(req.body);
+      console.log(req.body);
+      res.status(200).json({message : "מפלגה נרשמה בהצלחה !!!" });
+      console.log("qqqq");
+    data2.save();
+    console.log("pppp");
+  }
+  else {  res.status(404).json({ err: "מפלגה כבר קיימת" }); }
+});
   
   app.post("/deleteProduct", async (req, res) => {
     await productmodel.deleteOne({ name: req.body.name });
   });
  
   
-
+//לוח תוצאות 
   app.get("/homePage", async (req, res) => {
     let data = await productmodel.find({});
     res.json({ data: data });
   });
 
+  //הוספת מס מצביעים למפלגה 
   app.post("/Numberofvotes", async (req, res) => {
     try {
       console.log("porsttttt");
-      const re = await productmodel.findOne({ name: req.body.name });
-      const ooooo = await productmodel.updateOne({ name: req.body.name }, {NumberOfVotes: re.NumberOfVotes+1});
+      const product = await productmodel.findOne({ name: req.body.name });
+      await productmodel.updateOne({ name: req.body.name }, {NumberOfVotes: product.NumberOfVotes+1});
       await res.send("123").status(200);
-      const user = await productmodel.findOne({ID: req.body.id });
+      
+      //שינוי זכות הצבעה לבוחר שלא יצביע פעמיים 
       await usermodel.updateOne({ ID: req.body.id},{Suffrage:false});
     } catch (err) {
       console.log(err);

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const usermodel = require("./models/usersModel");
-
+const nodemailer = require("nodemailer");
 // const userSchema = new mongoose.Schema({
 //     name :{type: String,required:true },
 //     LastName :{type: String,required:true },
@@ -40,20 +40,24 @@ exports.user = (app) => {
     res.json({ data: data });
   });
 
+
+  //כניסת משתמש למערכת תוך בדיקה אם קיים במערכת 
   app.post("/login", async (req, res) => {
-    let data = await usermodel.findOne({ ID: req.body.id , name: req.body.name });
+    let data = await usermodel.findOne({ Fass: req.body.fass , name: req.body.name });
     console.log(data);
     if (!data) {
-      res.status(401).json({ err: "User not found!" });
+      res.status(401).json({ err: "משתמש או סיסמא לא נמצאים!" });
     } else {
+      //בדיקה אם משתמש בן 18
       if (getAge(data.Dateofbirth) < 18) {
         res.status(401).json({
-          err: "You are not yet 18 years old, you are not entitled to vote",
+          err: "אינך עדיין בן 18, אינך זכאי להצביע",
         });
       } 
+      //בדיקה אם משתמש כבר הצביע
       else if(!data.Suffrage){
         res.status(401).json({
-          err: "A user has already voted",
+          err: "משתמש יקר כבר מימשת את זכות ההצבעה שלך ",
         });
       }
       
@@ -62,21 +66,62 @@ exports.user = (app) => {
       }
     }
   });
-//הוספת משתמשים חדשים 
+
+
+  //הוספת משתמשים חדשים 
   app.post("/", async (req, res) => {
   console.log("123");
+  //בדיקה אם משתמש כבר קיים ואם לא קיים נכנס למערכת
   let data = await usermodel.findOne({ ID: req.body.ID});
   if(!data){
     let data2 = new usermodel(req.body);
     console.log(req.body);
-    res.status(200).json({message : "User successfully registered !!!" });
-    data2.save(function (err) {
+    res.status(200).json({message : "המשתמש נרשם בהצלחה !!!" });
+    data2.save(async function  (err) 
+    {
+      const arrS=[`a`,`b`,`c`,`d`,`e`,`f`,`g`,`h`,`i`,`j`,`k`,`l`,`m`,`n`,`o`,`p`,`q`,`r`,`s`,`t`,`u`,`v`,`w`,`x`,`y`,`z`]
+      const arrL=[`A`,`B`,`C`,`D`,`E`,`F`,`G`,`H`,`I`,`J`,`K`,`L`,`M`,`N`,`O`,`P`,`Q`,`R`,`S`,`T`,`U`,`V`,`W`,`X`,`Y`,`Z`]
+      const rnd1=Math.floor(Math.random() * 10000);
+      const rnd2=Math.floor(Math.random() * 10000);
+      const rnd3=Math.floor(Math.random() * 26);
+      const rnd4=Math.floor(Math.random() * 26);
+      const string="שלום וברכה הינך זכאי להצביע במערכת הבחירות הבאה מצורף קוד כניסה למערכת ";
+      
+       
+      await usermodel.updateOne({ID: req.body.ID}, {Fass: rnd1+arrS[rnd3]+arrL[rnd4]+rnd2});
+
+      const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+      user: "kobik1494@gmail.com",
+      pass: "xclbqiomrqttpdfi",
+      },
+    });
+    const mailOptions = {
+      from: "kobik1494@gmail.com",
+      to: req.body.Email,
+      subject: "Sending Email using Node.js",
+      // text:  "Hi, you are eligible to vote in the next election, an access code to the system is attached"+"  "+rnd1+arrS[rnd3]+arrL[rnd4]+rnd2,
+      /*text:"שלום וברכה הינך זכאי להצביע במערכת הבחירות הבאה מצורף קוד כניסה למערכת" + rnd1+arrS[rnd3]+arrL[rnd4]+rnd2*/
+      text:  "שלום " +data2.name+" הינך זכאי/ת להצביע במערכת הבחירות הבאה נא להצטייד בתעודת זהות או דרכון בתוקף מצורף קוד כניסה למערכת    " + "\n" + rnd1+arrS[rnd3]+arrL[rnd4]+rnd2 
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+      
+      
+      
       if (err) {
         res.status(400).json({ err: err });
       }
     });
   }
-  else {  res.status(404).json({ err: "User already exists" }); }
+  else {  res.status(404).json({ err: "משתמש כבר קיים" }); }
   
   });
 
