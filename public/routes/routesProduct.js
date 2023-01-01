@@ -8,9 +8,9 @@ const ProductSchema = new mongoose.Schema({
 const productmodel = mongoose.model("products", ProductSchema);
 
 exports.product = (app) => {
+  //הוספת מפלגות 
   app.post("/product", async (req, res) => {
     let data = await productmodel.findOne({ name: req.body.name});
-    // let data = new productmodel(req.body);
     if(!data){
       let data2 = new productmodel(req.body);
       console.log(req.body);
@@ -21,9 +21,18 @@ exports.product = (app) => {
   }
   else {  res.status(404).json({ err: "מפלגה כבר קיימת" }); }
 });
-  
+  // מחיקת מפלגות 
   app.post("/deleteProduct", async (req, res) => {
-    await productmodel.deleteOne({ name: req.body.name });
+    let Product =await productmodel.findOne({ name: req.body.name});
+    
+    if(!Product){
+      res.status(404).json({ err: "מפלגה לא קיימת" });
+    }
+    else {
+      await productmodel.deleteOne({ name: req.body.name });
+      res.status(200).json({message:" מפלגה הוסרה בהצלחה"})
+    }
+    
   });
  
   
@@ -38,6 +47,7 @@ exports.product = (app) => {
     try {
       console.log("porsttttt");
       const product = await productmodel.findOne({ name: req.body.name });
+      
       await productmodel.updateOne({ name: req.body.name }, {NumberOfVotes: product.NumberOfVotes+1});
       await res.send("123").status(200);
       

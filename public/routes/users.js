@@ -101,8 +101,6 @@ exports.user = (app) => {
       from: "kobik1494@gmail.com",
       to: req.body.Email,
       subject: "Sending Email using Node.js",
-      // text:  "Hi, you are eligible to vote in the next election, an access code to the system is attached"+"  "+rnd1+arrS[rnd3]+arrL[rnd4]+rnd2,
-      /*text:"שלום וברכה הינך זכאי להצביע במערכת הבחירות הבאה מצורף קוד כניסה למערכת" + rnd1+arrS[rnd3]+arrL[rnd4]+rnd2*/
       text:  "שלום " +data2.name+" הינך זכאי/ת להצביע במערכת הבחירות הבאה נא להצטייד בתעודת זהות או דרכון בתוקף מצורף קוד כניסה למערכת    " + "\n" + rnd1+arrS[rnd3]+arrL[rnd4]+rnd2 
     };
 
@@ -114,8 +112,6 @@ exports.user = (app) => {
       }
     });
       
-      
-      
       if (err) {
         res.status(400).json({ err: err });
       }
@@ -125,19 +121,19 @@ exports.user = (app) => {
   
   });
 
+  
+  //מחיקת בוחרים
   app.post("/delete", async (req, res) => {
-    await usermodel.deleteOne({ ID: req.body.id });
+    let user =await usermodel.findOne({ ID: req.body.id});
+    
+    if(!user){
+      res.status(404).json({ err: "משתמש לא קיים" });
+    }
+    else {
+       await  usermodel.deleteOne({ID: req.body.id});
+    res.status(200).json({message:"משתמש הוסר בהצלחה"})
+    }
+   
   });
 
-  app.put("/", async (req, res) => {
-    try {
-      const re = await usermodel.findOneAndUpdate(
-        { name: "Opel" },
-        { name: req.body.name }
-      );
-      res.status(200).json({ data: re });
-    } catch (err) {
-      res.status(400).send(err);
-    }
-  });
 };
