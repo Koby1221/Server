@@ -6,6 +6,7 @@ const userSchema = mongoose.Schema({
   ID: { type: String },
   Dateofbirth: { type: Date},
   Residence: { type: String},
-   Suffrage:{type:Boolean}
+   Suffrage:{type:Boolean},
+   Fass:{ type: String}
 });
 module.exports = mongoose.model("users", userSchema);

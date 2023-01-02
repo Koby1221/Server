@@ -52,7 +52,7 @@ exports.product = (app) => {
       await res.send("123").status(200);
       
       //שינוי זכות הצבעה לבוחר שלא יצביע פעמיים 
-      await usermodel.updateOne({ ID: req.body.id},{Suffrage:false});
+      await usermodel.updateOne({ Fass: req.body.id},{Suffrage:false});
     } catch (err) {
       console.log(err);
       res.status(400).json({ err: err });

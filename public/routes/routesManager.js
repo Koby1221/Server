@@ -7,27 +7,7 @@ exports.manager = (app) => {
   app.post("/manager", async (req, res) => {
     console.log("manager");
 
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "kobik1494@gmail.com",
-    //     pass: "xclbqiomrqttpdfi",
-    //   },
-    // });
-    // const mailOptions = {
-    //   from: "kobik1494@gmail.com",
-    //   to: "kobik1494@gmail.com",
-    //   subject: "Sending Email using Node.js",
-    //   text: "That was easy!",
-    // };
-
-    // transporter.sendMail(mailOptions, function (error, info) {
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     console.log("Email sent: " + info.response);
-    //   }
-    // });
+    
 
     //הצפנת הסיסמא לפעם הראשונה שהכנסתי סיסמא למנהל המערכת
     // let data2 = new managerModel(req.body);
