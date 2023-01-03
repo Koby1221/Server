@@ -28,6 +28,7 @@ exports.manager = (app) => {
     }
     else {
         bcrypt.compare(req.body.Password, data.Password, (err, respunse) => {
+          console.log("kkkkk");
         if (err) {
         console.log(err);
         console.log("rrrrr");
